@@ -67,7 +67,7 @@ Platform rules: {platform_rules.get(platform, "")}
 Respond ONLY with a valid JSON object — no markdown fences:
 {{"caption":"<full post caption>","hashtags":["#tag1","#tag2"],"image_prompt":"<detailed image prompt>"}}""".strip()
 
-    response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.1-flash-lite", contents=prompt)
     raw = response.text.strip()
     if raw.startswith("```"):
         raw = raw.split("```")[1]
