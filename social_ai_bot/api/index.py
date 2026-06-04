@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__, static_folder="../", static_url_path="")
+app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), ".."), static_url_path="")
 CORS(app)
 
 GEMINI_API_KEY              = os.environ.get("GEMINI_API_KEY", "")
@@ -216,7 +216,8 @@ def post_to_linkedin(caption, hashtags, access_token):
 
 @app.route("/")
 def index():
-    return send_from_directory("../../", "index.html")
+    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return send_from_directory(base, "index.html")
 
 
 @app.route("/callback")
