@@ -1,0 +1,7 @@
+flask
+flask-cors
+google-genai
+requests
+tweepy
+schedule
+python-dotenv
