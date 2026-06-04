@@ -1,2 +1,2 @@
-web: python api/index.py
-scheduler: python scheduler.py
+web: python3 api/index.py
+scheduler: python3 scheduler.py
