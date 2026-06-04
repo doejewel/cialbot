@@ -61,7 +61,7 @@ Respond ONLY with a valid JSON object — no markdown fences, no preamble:
 }}
 """.strip()
 
-    response = client.models.generate_content(model="gemini-3.1-flash-lite", contents=prompt)
+    response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
     raw = response.text.strip()
 
     if raw.startswith("```"):
@@ -216,8 +216,9 @@ def post_to_linkedin(caption, hashtags, access_token):
 
 @app.route("/")
 def index():
-    base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    return send_from_directory(base, "index.html")
+    # index.html is in social_ai_bot/ (one level up from api/)
+    base = os.path.dirname(os.path.abspath(__file__))
+    return send_from_directory(os.path.join(base, ".."), "index.html")
 
 
 @app.route("/callback")
@@ -333,6 +334,23 @@ def generate():
                     instagram_result = {"status": "posted", "media_id": media_id}
                 except Exception as e:
                     instagram_result = {"status": "error", "error": str(e)}
+
+        # LinkedIn auto-post
+        post_to_li = data.get("post_to_linkedin", False)
+        linkedin_result = {"status": "not_requested"}
+        if post_to_li and "linkedin" in posts:
+            if not LINKEDIN_ACCESS_TOKEN:
+                linkedin_result = {"status": "error", "error": "LINKEDIN_ACCESS_TOKEN not set"}
+            else:
+                try:
+                    post_id = post_to_linkedin(
+                        posts["linkedin"]["caption"],
+                        posts["linkedin"]["hashtags"],
+                        LINKEDIN_ACCESS_TOKEN,
+                    )
+                    linkedin_result = {"status": "posted", "post_id": post_id}
+                except Exception as e:
+                    linkedin_result = {"status": "error", "error": str(e)}
 
         # Twitter auto-post
         twitter_result = {"status": "not_requested"}
